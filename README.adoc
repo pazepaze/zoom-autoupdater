@@ -1,0 +1,22 @@
+= Zoom Auto Updater
+
+Install/uninstall script for systemd timer/service that checks daily whether there is a newer version of zoom available than the one installed on the website.
+If there is a newer version, it downloads the linux .deb package from the zoom website and installs it.
+
+== Usage
+
+=== Install
+
+[source,shell script]
+----
+chmod +x ./autoupdate-zoom.sh
+./autoupdate-zoom.sh install
+----
+
+=== Uninstall
+
+[source,shell script]
+----
+./autoupdate-zoom.sh uninstall
+----
+
