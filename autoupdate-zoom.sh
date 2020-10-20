@@ -39,6 +39,7 @@ echo zoom version installed: \$ZOOM_VERSION_INSTALLED
 if [ "\$ZOOM_VERSION_AVAILABLE" != "\$ZOOM_VERSION_INSTALLED" ]; then
    echo downloading new version...
    wget --quiet https://zoom.us/client/latest/zoom_amd64.deb -P /tmp
+   export DEBIAN_FRONTEND=noninteractive
    apt-get install -y /tmp/zoom_amd64.deb
    rm /tmp/zoom_amd64.deb
 else
