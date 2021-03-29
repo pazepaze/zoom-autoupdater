@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ $UID != 0 ]]; then
-    echo "Please run this script with sudo."
-    exit 1
+  echo "Please run this script with sudo."
+  exit 1
 fi
 
 function displayHelp() {
@@ -15,22 +15,22 @@ function displayHelp() {
 # Parse options
 while getopts ":h" opt; do
   case ${opt} in
-    h )
-      displayHelp
-      ;;
-   \? )
-     echo "Invalid Option: -$OPTARG" 1>&2
-     exit 1
-     ;;
+  h)
+    displayHelp
+    ;;
+  \?)
+    echo "Invalid Option: -$OPTARG" 1>&2
+    exit 1
+    ;;
   esac
 done
-shift $((OPTIND -1))
+shift $((OPTIND - 1))
 
 subcommand=$1
 case "$subcommand" in
-  install)
-    mkdir /opt/zoom-updater
-cat <<EOF > /opt/zoom-updater/zoom-update.sh
+install)
+  mkdir /opt/zoom-updater
+  cat <<EOF >/opt/zoom-updater/zoom-update.sh
 #!/bin/bash
 export LANG=en
 ZOOM_VERSION_AVAILABLE=\$(curl -s 'https://zoom.us/support/download' --header 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36' | grep "class=\"linux-ver-text\"" | sed -e 's/.*Version \(.*\)<.*/\1/')
@@ -51,9 +51,9 @@ else
    echo already at latest version
 fi
 EOF
-chmod +x /opt/zoom-updater/zoom-update.sh
+  chmod +x /opt/zoom-updater/zoom-update.sh
 
-cat <<EOF > /etc/systemd/system/zoom-update.timer
+  cat <<EOF >/etc/systemd/system/zoom-update.timer
 [Unit]
 Description=Update zoom daily
 
@@ -65,7 +65,7 @@ Persistent=true
 WantedBy=timers.target
 EOF
 
-cat <<EOF > /etc/systemd/system/zoom-update.service
+  cat <<EOF >/etc/systemd/system/zoom-update.service
 [Unit]
 Description=zoom update service
 After=network.target
@@ -77,25 +77,25 @@ ExecStart=/opt/zoom-updater/zoom-update.sh
 [Install]
 WantedBy=multi-user.target
 EOF
-    systemctl enable --now zoom-update.timer
-    # execute zoom update immediately
-    systemctl start zoom-update.service
-    # output systemd status/logs
-    systemctl --no-pager status zoom-update.timer
-    systemctl --no-pager status zoom-update.service
-    ;;
+  systemctl enable --now zoom-update.timer
+  # execute zoom update immediately
+  systemctl start zoom-update.service
+  # output systemd status/logs
+  systemctl --no-pager status zoom-update.timer
+  systemctl --no-pager status zoom-update.service
+  ;;
 
-  uninstall)
-    systemctl stop zoom-update.timer
-    systemctl disable zoom-update.timer
-    rm /etc/systemd/system/zoom-update.timer
-    rm /etc/systemd/system/zoom-update.service
-    rm -r /opt/zoom-updater
-    echo "uninstalled zoom auto update service"
-    ;;
+uninstall)
+  systemctl stop zoom-update.timer
+  systemctl disable zoom-update.timer
+  rm /etc/systemd/system/zoom-update.timer
+  rm /etc/systemd/system/zoom-update.service
+  rm -r /opt/zoom-updater
+  echo "uninstalled zoom auto update service"
+  ;;
 
-  *)
-    # no or unknown subcommand entered
-    displayHelp
-    ;;
+*)
+  # no or unknown subcommand entered
+  displayHelp
+  ;;
 esac
