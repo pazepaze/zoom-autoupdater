@@ -30,9 +30,8 @@ subcommand=$1
 case "$subcommand" in
 install)
   mkdir /opt/zoom-updater
-if command -v apt-cache &> /dev/null
-then
-  cat <<'EOF' >/opt/zoom-updater/zoom-update.sh
+  if command -v apt-cache &>/dev/null; then
+    cat <<'EOF' >/opt/zoom-updater/zoom-update.sh
 #!/bin/bash
 export LANG=en
 ZOOM_VERSION_AVAILABLE=$(curl -s 'https://zoom.us/support/download' --header 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36' | grep "class=\"linux-ver-text\"" | sed -e 's/.*Version \(.*\)<.*/\1/')
@@ -53,10 +52,9 @@ else
    echo already at latest version
 fi
 EOF
-fi
-if command -v dnf &> /dev/null
-then
-  cat <<'EOF' >/opt/zoom-updater/zoom-update.sh
+  fi
+  if command -v dnf &>/dev/null; then
+    cat <<'EOF' >/opt/zoom-updater/zoom-update.sh
 #!/bin/bash
 export LANG=en_US
 ZOOM_VERSION_AVAILABLE=$(curl -s 'https://zoom.us/support/download' --header 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36' | grep "class=\"linux-ver-text\"" | sed -e 's/.*Version \(.*\)<.*/\1/')
@@ -76,7 +74,7 @@ else
    echo already at latest version
 fi
 EOF
-fi
+  fi
   chmod +x /opt/zoom-updater/zoom-update.sh
 
   cat <<'EOF' >/etc/systemd/system/zoom-update.timer
